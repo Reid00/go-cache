@@ -1,0 +1,36 @@
+package gocache
+
+import (
+	"sync"
+
+	"github.com/Reid00/go-cache/lru"
+)
+
+type cache struct {
+	mu        sync.RWMutex
+	lru       *lru.Cache
+	cacheByte int64
+}
+
+func (c *cache) add(key string, value ByteView) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.lru == nil {
+		c.lru = lru.New(c.cacheByte, nil)
+	}
+	c.lru.Add(key, value)
+}
+
+func (c *cache) get(key string) (value ByteView, ok bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.lru == nil {
+		return
+	}
+
+	if v, ok := c.lru.Get(key); ok {
+		return v.(ByteView), true
+	}
+	return
+}
