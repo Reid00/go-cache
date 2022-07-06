@@ -6,8 +6,8 @@ import (
 
 type (
 	Cache struct {
-		maxBytes int64
-		nbyte    int64
+		maxBytes int64		// maxBytes of cache
+		nbyte    int64		// current bytes of cache
 		ll       *list.List
 		cache    map[string]*list.Element
 		// optional and executed when an entry is purged.

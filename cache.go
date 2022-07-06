@@ -9,7 +9,7 @@ import (
 type cache struct {
 	mu        sync.RWMutex
 	lru       *lru.Cache
-	cacheByte int64
+	cacheBytes int64
 }
 
 func (c *cache) add(key string, value ByteView) {
@@ -17,14 +17,15 @@ func (c *cache) add(key string, value ByteView) {
 	defer c.mu.Unlock()
 
 	if c.lru == nil {
-		c.lru = lru.New(c.cacheByte, nil)
+		c.lru = lru.New(c.cacheBytes, nil)
 	}
 	c.lru.Add(key, value)
 }
 
 func (c *cache) get(key string) (value ByteView, ok bool) {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
+	// cannot use RLock since c.lru.Cache will be udpated while call Get method
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	if c.lru == nil {
 		return
 	}
