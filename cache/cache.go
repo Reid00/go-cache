@@ -1,14 +1,14 @@
-package gocache
+package cache
 
 import (
 	"sync"
 
-	"github.com/Reid00/go-cache/lru"
+	"cache/lru"
 )
 
 type cache struct {
-	mu        sync.RWMutex
-	lru       *lru.Cache
+	mu         sync.RWMutex
+	lru        *lru.Cache
 	cacheBytes int64
 }
 
